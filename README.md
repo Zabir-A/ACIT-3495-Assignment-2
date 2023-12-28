@@ -21,4 +21,3 @@
 
 ### Infrastructure of Microservices
 
-![image](https://github.com/Zabir-A/ACIT-3495-Assignment-2/assets/77983828/6155fb8c-c6af-47de-a5b8-599d30f2ebd5)
