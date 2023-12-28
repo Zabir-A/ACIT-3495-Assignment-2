@@ -1,0 +1,263 @@
+# Enter Grades App Deployment and Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: enter-grades-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: enter-grades-app
+  template:
+    metadata:
+      labels:
+        app: enter-grades-app
+    spec:
+      containers:
+      - name: enter-grades-app
+        image: gcr.io/project-2-acit-3495/enter-grades-app:v1
+        ports:
+        - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: enter-grades-app
+spec:
+  selector:
+    app: enter-grades-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  # type: ClusterIP
+  type: LoadBalancer
+
+
+# Auth Service Deployment and Service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-service
+  template:
+    metadata:
+      labels:
+        app: auth-service
+    spec:
+      containers:
+      - name: auth-service
+        image: gcr.io/project-2-acit-3495/auth-service:v1
+        ports:
+        - containerPort: 5001
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service
+spec:
+  selector:
+    app: auth-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5001
+  type: ClusterIP
+  # type: LoadBalancer
+
+# Analytics Service Deployment and Service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: analytics-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: analytics-service
+  template:
+    metadata:
+      labels:
+        app: analytics-service
+    spec:
+      containers:
+      - name: analytics-service
+        image: gcr.io/project-2-acit-3495/analytics-service:v1
+        ports:
+        - containerPort: 3002
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: analytics-service
+spec:
+  selector:
+    app: analytics-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3002
+  type: ClusterIP
+
+# Show Results App Deployment and Service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: show-results-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: show-results-app
+  template:
+    metadata:
+      labels:
+        app: show-results-app
+    spec:
+      containers:
+      - name: show-results-app
+        image: gcr.io/project-2-acit-3495/show-results-app:v1
+        ports:
+        - containerPort: 3003
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: show-results-app
+spec:
+  selector:
+    app: show-results-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3003
+  # type: ClusterIP
+  type: LoadBalancer
+
+  # MongoDB Deployment 
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+      - name: mongodb
+        image: mongo:4.4
+        ports:
+        - containerPort: 27017
+
+        env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          value: root
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          value: rootpassword
+
+        volumeMounts:
+        - name: mongodb-data
+          mountPath: /data/db
+          
+      volumes:
+      - name: mongodb-data
+        persistentVolumeClaim:
+          claimName: mongodb-data
+
+# Mongodb Service 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+spec:
+  selector:
+    app: mongodb
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
+  type: ClusterIP
+
+# MySQL
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:5.7
+        args:
+        - "--ignore-db-dir=lost+found"
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "1500m"
+        ports:
+        - containerPort: 3306
+
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: rootpassword
+        - name: MYSQL_DATABASE
+          value: students
+        - name: MYSQL_USER
+          value: user
+        - name: MYSQL_PASSWORD
+          value: password
+
+        volumeMounts:
+        - name: mysql-initdb-config
+          mountPath: "/docker-entrypoint-initdb.d"
+        - name: mysql-data
+          mountPath: /var/lib/mysql
+          
+      volumes:
+      - name: mysql-data
+
+        persistentVolumeClaim:
+          claimName: mysql-data
+
+      - name: mysql-initdb-config
+        configMap:
+          name: mysql-initdb
+
+# mysql service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+spec:
+  selector:
+    app: mysql
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+  type: ClusterIP

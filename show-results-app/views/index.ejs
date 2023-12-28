@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results Page</title>
+</head>
+<body>
+    <h1>Results</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Grade</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% results.forEach(function(result) { %>
+                <tr>
+                    <td><%= result.name || 'N/A' %></td>
+                    <td><%= result.grade || 'N/A' %></td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+    <h2>Statistics</h2>
+    <ul>
+        <% if (results.length === 0) { %>
+            <li>No results available.</li>
+        <% } else { %>
+            <li>
+                <strong>Minimum Grade:</strong> <%= results[results.length - 1].min || 'N/A' %><br>
+                <strong>Maximum Grade:</strong> <%= results[results.length - 1].max || 'N/A' %><br>
+                <strong>Average Grade:</strong> <%= results[results.length - 1].avg || 'N/A' %><br>
+            </li>
+        <% } %>
+    </ul>
+</body>
+</html>
+
