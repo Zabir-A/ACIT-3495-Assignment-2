@@ -1,5 +1,6 @@
-# ACIT 3495 Project 2: Kubernetes Deployment & Horizontal Scaling
+# ACIT 3495 Project 2: Kubernetes Deployment & Horizontal Autoscaling
 
+ 
 ### Overview 
 
 **Microservice Components:**
@@ -20,4 +21,6 @@
     - Connects to MongoDB & renders stats / student grades to webpage
 
 ### Infrastructure of Microservices
+
+![Alt text](infrastructure.png)
 
