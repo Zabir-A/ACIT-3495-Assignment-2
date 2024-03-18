@@ -1,4 +1,4 @@
-# ACIT 3495 Project 2: Kubernetes Deployment & Horizontal Autoscaling
+## ACIT 3495 Project 2: Kubernetes Deployment & Horizontal Autoscaling
 
  
 ### Overview 
